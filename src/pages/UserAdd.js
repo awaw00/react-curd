@@ -1,4 +1,5 @@
 import React from 'react';
+import FormItem from '../components/FormItem';
 import formProvider from '../utils/formProvider';
 
 class UserAdd extends React.Component {
@@ -47,33 +48,30 @@ class UserAdd extends React.Component {
 
         <main>
           <form onSubmit={(e) => this.handleSubmit(e)}>
-            <label>用户名：</label>
-            <input
-              type="text"
-              value={name.value}
-              onChange={(e) => onFormChange('name', e.target.value)}
-            />
-            {!name.valid && <span>{name.error}</span>}
-            <br/>
-            <label>年龄：</label>
-            <input
-              type="number"
-              value={age.value || ''}
-              onChange={(e) => onFormChange('age', +e.target.value)}
-            />
-            {!age.valid && <span>{age.error}</span>}
-            <br/>
-            <label>性别：</label>
-            <select
-              value={gender.value}
-              onChange={(e) => onFormChange('gender', e.target.value)}
-            >
-              <option value="">请选择</option>
-              <option value="male">男</option>
-              <option value="female">女</option>
-            </select>
-            {!gender.valid && <span>{gender.error}</span>}
-            <br/>
+            <FormItem label="用户名：" valid={name.valid} error={name.error}>
+              <input
+                type="text"
+                value={name.value}
+                onChange={(e) => onFormChange('name', e.target.value)}
+              />
+            </FormItem>
+            <FormItem label="年龄：" valid={age.valid} error={age.error}>
+              <input
+                type="number"
+                value={age.value || ''}
+                onChange={(e) => onFormChange('age', +e.target.value)}
+              />
+            </FormItem>
+            <FormItem label="性别：" valid={gender.valid} error={gender.error}>
+              <select
+                value={gender.value}
+                onChange={(e) => onFormChange('gender', e.target.value)}
+              >
+                <option value="">请选择</option>
+                <option value="male">男</option>
+                <option value="female">女</option>
+              </select>
+            </FormItem>
             <br/>
             <input type="submit" value="提交"/>
           </form>
