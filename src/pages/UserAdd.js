@@ -88,8 +88,14 @@ UserAdd = formProvider({
     defaultValue: '',
     rules: [
       {
+        pattern: function (value) {
+          return value.length > 0;
+        },
+        error: '请输入用户名'
+      },
+      {
         pattern: /^.{1,4}$/,
-        error: '请输入合法的用户名（最多4个字符）'
+        error: '用户名最多4个字符'
       }
     ]
   },
