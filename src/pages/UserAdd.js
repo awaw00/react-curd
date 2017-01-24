@@ -1,33 +1,22 @@
 import React from 'react';
+import formProvider from '../utils/formProvider';
 
 class UserAdd extends React.Component {
-  constructor () {
-    super();
-    this.state = {
-      name: '',
-      age: 0,
-      gender: ''
-    };
-  }
-  handleValueChange (field, value, type = 'string') {
-    if (type === 'number') {
-      value = +value;
-    }
-
-    this.setState({
-      [field]: value
-    });
-  }
   handleSubmit (e) {
     e.preventDefault();
 
-    const {name, age, gender} = this.state;
+    const {form: {name, age, gender}, formValid} = this.props;
+    if (!formValid) {
+      alert('请填写正确的信息后重试');
+      return;
+    }
+
     fetch('http://localhost:3000/user', {
       method: 'post',
       body: JSON.stringify({
-        name,
-        age,
-        gender
+        name: name.value,
+        age: age.value,
+        gender: gender.value
       }),
       headers: {
         'Content-Type': 'application/json'
@@ -49,7 +38,7 @@ class UserAdd extends React.Component {
       .catch((err) => console.error(err));
   }
   render () {
-    const {name, age, gender} = this.state;
+    const {form: {name, age, gender}, onFormChange} = this.props;
     return (
       <div>
         <header>
@@ -59,17 +48,31 @@ class UserAdd extends React.Component {
         <main>
           <form onSubmit={(e) => this.handleSubmit(e)}>
             <label>用户名：</label>
-            <input type="text" value={name} onChange={(e) => this.handleValueChange('name', e.target.value)}/>
+            <input
+              type="text"
+              value={name.value}
+              onChange={(e) => onFormChange('name', e.target.value)}
+            />
+            {!name.valid && <span>{name.error}</span>}
             <br/>
             <label>年龄：</label>
-            <input type="number" value={age || ''} onChange={(e) => this.handleValueChange('age', e.target.value, 'number')}/>
+            <input
+              type="number"
+              value={age.value || ''}
+              onChange={(e) => onFormChange('age', +e.target.value)}
+            />
+            {!age.valid && <span>{age.error}</span>}
             <br/>
             <label>性别：</label>
-            <select value={gender} onChange={(e) => this.handleValueChange('gender', e.target.value)}>
+            <select
+              value={gender.value}
+              onChange={(e) => onFormChange('gender', e.target.value)}
+            >
               <option value="">请选择</option>
               <option value="male">男</option>
               <option value="female">女</option>
             </select>
+            {!gender.valid && <span>{gender.error}</span>}
             <br/>
             <br/>
             <input type="submit" value="提交"/>
@@ -79,5 +82,39 @@ class UserAdd extends React.Component {
     );
   }
 }
+
+UserAdd = formProvider({
+  name: {
+    defaultValue: '',
+    rules: [
+      {
+        pattern: /^.{1,4}$/,
+        error: '请输入合法的用户名（最多4个字符）'
+      }
+    ]
+  },
+  age: {
+    defaultValue: 0,
+    rules: [
+      {
+        pattern: function (value) {
+          return value >= 1 && value <= 100;
+        },
+        error: '请输入1~100的年龄'
+      }
+    ]
+  },
+  gender: {
+    defaultValue: '',
+    rules: [
+      {
+        pattern: function (value) {
+          return !!value;
+        },
+        error: '请选择性别'
+      }
+    ]
+  }
+})(UserAdd);
 
 export default UserAdd;

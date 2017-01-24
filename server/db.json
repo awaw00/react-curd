@@ -17,6 +17,30 @@
       "age": 26,
       "gender": "male",
       "id": 10002
+    },
+    {
+      "name": {
+        "valid": true,
+        "value": "韩梅梅",
+        "msg": "用户名最多4个字符"
+      },
+      "age": {
+        "valid": true,
+        "value": 22,
+        "msg": ""
+      },
+      "gender": {
+        "valid": true,
+        "value": "female",
+        "msg": ""
+      },
+      "id": 10003
+    },
+    {
+      "name": "2222",
+      "age": 20,
+      "gender": "male",
+      "id": 10004
     }
   ],
   "book": [
