@@ -20,7 +20,27 @@ function formProvider (fields) {
         };
 
         this.handleValueChange = this.handleValueChange.bind(this);
+        this.setFormValues = this.setFormValues.bind(this);
       }
+
+      setFormValues (values) {
+        if (!values) {
+          return;
+        }
+
+        const {form} = this.state;
+        let newForm = {...form};
+        for (const field in form) {
+          if (form.hasOwnProperty(field)) {
+            if (typeof values[field] !== 'undefined') {
+              newForm[field] = {...newForm[field], value: values[field]};
+            }
+          }
+        }
+
+        this.setState({form: newForm});
+      }
+
       handleValueChange (fieldName, value) {
         const { form } = this.state;
         const fieldState = form[fieldName];
@@ -53,9 +73,18 @@ function formProvider (fields) {
           formValid
         });
       }
+
       render () {
         const {form, formValid} = this.state;
-        return <Comp {...this.props} form={form} formValid={formValid} onFormChange={this.handleValueChange}/>
+        return (
+          <Comp
+            {...this.props}
+            form={form}
+            formValid={formValid}
+            onFormChange={this.handleValueChange}
+            setFormValues={this.setFormValues}
+          />
+        );
       }
     }
 
