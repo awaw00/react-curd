@@ -27,11 +27,8 @@ class UserAdd extends React.Component {
       .then((res) => {
         if (res.id) {
           alert('添加用户成功');
-          this.setState({
-            name: '',
-            age: 0,
-            gender: ''
-          });
+          this.context.router.push('/user/list');
+          return;
         } else {
           alert('添加失败');
         }
@@ -80,6 +77,10 @@ class UserAdd extends React.Component {
     );
   }
 }
+
+UserAdd.contextTypes = {
+  router: React.PropTypes.object.isRequired
+};
 
 UserAdd = formProvider({
   name: {
