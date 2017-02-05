@@ -12,7 +12,7 @@
 - reselect - [github](https://github.com/reactjs/reselect)
 - antd - [github](https://github.com/ant-design/ant-design)
 
-请搭配博文http://blog.csdn.net/awaw00/article/category/6692955食用。
+请搭配[博客文章](http://blog.csdn.net/awaw00/article/category/6692955)食用。
 
 每篇文章的代码都打了相应的tag，如：
 
