@@ -33,7 +33,7 @@ class UserList extends React.Component {
         .then(res => res.json())
         .then(res => {
           this.setState({
-            userList: this.state.userList.filter(item => item.id !== user.id)
+            userList: this.state.bookList.filter(item => item.id !== user.id)
           });
           alert('删除用户成功');
         })
