@@ -11,12 +11,6 @@
       "name": "张三",
       "age": 30,
       "gender": "female"
-    },
-    {
-      "name": "李雷",
-      "age": 26,
-      "gender": "male",
-      "id": 10002
     }
   ],
   "book": [

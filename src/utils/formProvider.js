@@ -35,6 +35,7 @@ function formProvider (fields) {
             if (typeof values[field] !== 'undefined') {
               newForm[field] = {...newForm[field], value: values[field]};
             }
+            newForm[field].valid = true;
           }
         }
 

@@ -1,18 +1,35 @@
 import React from 'react';
+import FormItem from '../components/FormItem';
 import formProvider from '../utils/formProvider';
 
 class UserEditor extends React.Component {
+  componentWillMount () {
+    const {editTarget, setFormValues} = this.props;
+    if (editTarget) {
+      setFormValues(editTarget);
+    }
+  }
+
   handleSubmit (e) {
     e.preventDefault();
 
-    const {form: {name, age, gender}, formValid} = this.props;
+    const {form: {name, age, gender}, formValid, editTarget} = this.props;
     if (!formValid) {
       alert('请填写正确的信息后重试');
       return;
     }
 
-    fetch('http://localhost:3000/user', {
-      method: 'post',
+    let editType = '添加';
+    let apiUrl = 'http://localhost:3000/user';
+    let method = 'post';
+    if (editTarget) {
+      editType = '编辑';
+      apiUrl += '/' + editTarget.id;
+      method = 'put';
+    }
+
+    fetch(apiUrl, {
+      method,
       body: JSON.stringify({
         name: name.value,
         age: age.value,
@@ -25,15 +42,16 @@ class UserEditor extends React.Component {
       .then((res) => res.json())
       .then((res) => {
         if (res.id) {
-          alert('添加用户成功');
+          alert(editType + '用户成功');
           this.context.router.push('/user/list');
           return;
         } else {
-          alert('添加失败');
+          alert(editType + '失败');
         }
       })
       .catch((err) => console.error(err));
   }
+
   render () {
     const {form: {name, age, gender}, onFormChange} = this.props;
     return (
@@ -68,7 +86,6 @@ class UserEditor extends React.Component {
     );
   }
 }
-
 
 UserEditor.contextTypes = {
   router: React.PropTypes.object.isRequired
