@@ -1,10 +1,14 @@
 import React from 'react';
-import FormItem from '../components/FormItem';
+import FormItem from './FormItem';
+import AutoComplete from './AutoComplete';
 import formProvider from '../utils/formProvider';
 
 class BookEditor extends React.Component {
   constructor (props) {
     super(props);
+    this.state = {
+      recommendUsers: []
+    };
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
@@ -57,7 +61,44 @@ class BookEditor extends React.Component {
       .catch((err) => console.error(err));
   }
 
+  getRecommendUsers (partialUserId) {
+    fetch('http://localhost:3000/user?id_like=' + partialUserId)
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.length === 1 && res[0].id === partialUserId) {
+          return;
+        }
+
+        this.setState({
+          recommendUsers: res.map((user) => {
+            return {
+              text: `${user.id}（${user.name}）`,
+              value: user.id
+            };
+          })
+        });
+      });
+  }
+
+  timer = 0;
+  handleOwnerIdChange (value) {
+    this.props.onFormChange('owner_id', value);
+    this.setState({recommendUsers: []});
+
+    if (this.timer) {
+      clearTimeout(this.timer);
+    }
+
+    if (value) {
+      this.timer = setTimeout(() => {
+        this.getRecommendUsers(value);
+        this.timer = 0;
+      }, 200);
+    }
+  }
+
   render () {
+    const {recommendUsers} = this.state;
     const {form: {name, price, owner_id}, onFormChange} = this.props;
     return (
       <form onSubmit={this.handleSubmit}>
@@ -70,7 +111,12 @@ class BookEditor extends React.Component {
         </FormItem>
 
         <FormItem label="所有者：" valid={owner_id.valid} error={owner_id.error}>
-          <input type="number" value={owner_id.value || ''} onChange={e => onFormChange('owner_id', +e.target.value)}/>
+          {/*<input type="number" value={owner_id.value || ''} onChange={e => onFormChange('owner_id', +e.target.value)}/>*/}
+          <AutoComplete
+            value={owner_id.value ? owner_id.value + '' : ''}
+            options={recommendUsers}
+            onValueChange={value => this.handleOwnerIdChange(value)}
+          />
         </FormItem>
         <br/>
         <input type="submit" value="提交"/>

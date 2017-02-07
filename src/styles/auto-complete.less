@@ -1,0 +1,24 @@
+.wrapper {
+  display: inline-block;
+  position: relative;
+}
+
+.options {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  top: 110%;
+  left: 0;
+  right: 0;
+  position: absolute;
+  box-shadow: 1px 1px 10px 0 rgba(0, 0, 0, .6);
+
+  > li {
+    padding: 3px 6px;
+
+    &.active {
+      background-color: #0094ff;
+      color: white;
+    }
+  }
+}
