@@ -116,6 +116,12 @@ BookEditor = formProvider({
       {
         pattern: /^\d+$/,
         error: '请输入合法的用户ID'
+      },
+      {
+        pattern (value) {
+          return value !== 0;
+        },
+        error: '请输入用户ID'
       }
     ]
   }
