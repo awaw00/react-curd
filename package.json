@@ -4,7 +4,7 @@
   "description": "",
   "main": "src/index.js",
   "scripts": {
-    "server": "cd server && json-server db.json -w",
+    "server": "node server/index.js",
     "dev": "roadhog server"
   },
   "author": "",
@@ -13,5 +13,8 @@
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
     "react-router": "^3.0.2"
+  },
+  "devDependencies": {
+    "json-server": "^0.9.4"
   }
 }
