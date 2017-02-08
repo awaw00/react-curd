@@ -1,5 +1,6 @@
 import React from 'react';
 import HomeLayout from '../layouts/HomeLayout';
+import { get, del } from '../utils/request';
 
 class UserList extends React.Component {
   constructor (props) {
@@ -10,8 +11,7 @@ class UserList extends React.Component {
   }
 
   componentWillMount () {
-    fetch('http://localhost:3000/user')
-      .then(res => res.json())
+    get('http://localhost:3000/user')
       .then(res => {
         this.setState({
           userList: res
@@ -27,10 +27,7 @@ class UserList extends React.Component {
     const confirmed = confirm(`确定要删除用户 ${user.name} 吗？`);
 
     if (confirmed) {
-      fetch('http://localhost:3000/user/' + user.id, {
-        method: 'delete'
-      })
-        .then(res => res.json())
+      del('http://localhost:3000/user/' + user.id)
         .then(res => {
           this.setState({
             userList: this.state.bookList.filter(item => item.id !== user.id)

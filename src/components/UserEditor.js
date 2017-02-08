@@ -1,6 +1,7 @@
 import React from 'react';
 import FormItem from '../components/FormItem';
 import formProvider from '../utils/formProvider';
+import request from '../utils/request';
 
 class UserEditor extends React.Component {
   componentWillMount () {
@@ -28,18 +29,11 @@ class UserEditor extends React.Component {
       method = 'put';
     }
 
-    fetch(apiUrl, {
-      method,
-      body: JSON.stringify({
-        name: name.value,
-        age: age.value,
-        gender: gender.value
-      }),
-      headers: {
-        'Content-Type': 'application/json'
-      }
+    request(method, apiUrl, {
+      name: name.value,
+      age: age.value,
+      gender: gender.value
     })
-      .then((res) => res.json())
       .then((res) => {
         if (res.id) {
           alert(editType + '用户成功');

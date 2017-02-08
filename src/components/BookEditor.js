@@ -2,6 +2,7 @@ import React from 'react';
 import FormItem from './FormItem';
 import AutoComplete from './AutoComplete';
 import formProvider from '../utils/formProvider';
+import request, { get } from '../utils/request';
 
 class BookEditor extends React.Component {
   constructor (props) {
@@ -37,18 +38,11 @@ class BookEditor extends React.Component {
       method = 'put';
     }
 
-    fetch(apiUrl, {
-      method,
-      body: JSON.stringify({
-        name: name.value,
-        price: price.value,
-        owner_id: owner_id.value
-      }),
-      headers: {
-        'Content-Type': 'application/json'
-      }
+    request(method, apiUrl, {
+      name: name.value,
+      price: price.value,
+      owner_id: owner_id.value
     })
-      .then((res) => res.json())
       .then((res) => {
         if (res.id) {
           alert(editType + '书本成功');
@@ -62,8 +56,7 @@ class BookEditor extends React.Component {
   }
 
   getRecommendUsers (partialUserId) {
-    fetch('http://localhost:3000/user?id_like=' + partialUserId)
-      .then((res) => res.json())
+    get('http://localhost:3000/user?id_like=' + partialUserId)
       .then((res) => {
         if (res.length === 1 && res[0].id === partialUserId) {
           return;
@@ -81,6 +74,7 @@ class BookEditor extends React.Component {
   }
 
   timer = 0;
+
   handleOwnerIdChange (value) {
     this.props.onFormChange('owner_id', value);
     this.setState({recommendUsers: []});
@@ -111,7 +105,6 @@ class BookEditor extends React.Component {
         </FormItem>
 
         <FormItem label="所有者：" valid={owner_id.valid} error={owner_id.error}>
-          {/*<input type="number" value={owner_id.value || ''} onChange={e => onFormChange('owner_id', +e.target.value)}/>*/}
           <AutoComplete
             value={owner_id.value ? owner_id.value + '' : ''}
             options={recommendUsers}
