@@ -1,82 +1,124 @@
 import React from 'react';
-import FormItem from '../components/FormItem';
-import formProvider from '../utils/formProvider';
+import { Form, Input, InputNumber, Select, Button, message } from 'antd';
 import request from '../utils/request';
+
+const FormItem = Form.Item;
+
+const formLayout = {
+  labelCol: {
+    span: 4
+  },
+  wrapperCol: {
+    span: 16
+  }
+};
 
 class UserEditor extends React.Component {
   componentWillMount () {
-    const {editTarget, setFormValues} = this.props;
+    const {editTarget, form} = this.props;
     if (editTarget) {
-      setFormValues(editTarget);
+      // 直接调用form.setFieldsValue无效
+      // 等待官方回复 https://github.com/ant-design/ant-design/issues/4802
+      setTimeout(() => {
+        form.setFieldsValue(editTarget);
+      });
     }
   }
 
   handleSubmit (e) {
     e.preventDefault();
 
-    const {form: {name, age, gender}, formValid, editTarget} = this.props;
-    if (!formValid) {
-      alert('请填写正确的信息后重试');
-      return;
-    }
+    const {form, editTarget} = this.props;
 
-    let editType = '添加';
-    let apiUrl = 'http://localhost:3000/user';
-    let method = 'post';
-    if (editTarget) {
-      editType = '编辑';
-      apiUrl += '/' + editTarget.id;
-      method = 'put';
-    }
-
-    request(method, apiUrl, {
-      name: name.value,
-      age: age.value,
-      gender: gender.value
-    })
-      .then((res) => {
-        if (res.id) {
-          alert(editType + '用户成功');
-          this.context.router.push('/user/list');
-          return;
-        } else {
-          alert(editType + '失败');
+    form.validateFields((err, values) => {
+      if (!err) {
+        let editType = '添加';
+        let apiUrl = 'http://localhost:3000/user';
+        let method = 'post';
+        if (editTarget) {
+          editType = '编辑';
+          apiUrl += '/' + editTarget.id;
+          method = 'put';
         }
-      })
-      .catch((err) => console.error(err));
+
+        request(method, apiUrl, values)
+          .then((res) => {
+            if (res.id) {
+              message.success(editType + '用户成功');
+              this.context.router.push('/user/list');
+            } else {
+              message.error(editType + '失败');
+            }
+          })
+          .catch((err) => console.error(err));
+
+      } else {
+        message.warn(err);
+      }
+    });
   }
 
   render () {
-    const {form: {name, age, gender}, onFormChange} = this.props;
+    const {form} = this.props;
+    const {getFieldDecorator} = form;
     return (
-      <form onSubmit={(e) => this.handleSubmit(e)}>
-        <FormItem label="用户名：" valid={name.valid} error={name.error}>
-          <input
-            type="text"
-            value={name.value}
-            onChange={(e) => onFormChange('name', e.target.value)}
-          />
-        </FormItem>
-        <FormItem label="年龄：" valid={age.valid} error={age.error}>
-          <input
-            type="number"
-            value={age.value || ''}
-            onChange={(e) => onFormChange('age', +e.target.value)}
-          />
-        </FormItem>
-        <FormItem label="性别：" valid={gender.valid} error={gender.error}>
-          <select
-            value={gender.value}
-            onChange={(e) => onFormChange('gender', e.target.value)}
-          >
-            <option value="">请选择</option>
-            <option value="male">男</option>
-            <option value="female">女</option>
-          </select>
-        </FormItem>
-        <br/>
-        <input type="submit" value="提交"/>
-      </form>
+      <div style={{width: '400px'}}>
+        <Form onSubmit={(e) => this.handleSubmit(e)}>
+          <FormItem label="用户名：" {...formLayout}>
+            {getFieldDecorator('name', {
+              rules: [
+                {
+                  required: true,
+                  message: '请输入用户名'
+                },
+                {
+                  pattern: /^.{1,4}$/,
+                  message: '用户名最多4个字符'
+                }
+              ]
+            })(
+              <Input type="text"/>
+            )}
+          </FormItem>
+          <FormItem label="年龄：" {...formLayout}>
+            {getFieldDecorator('age', {
+              rules: [
+                {
+                  required: true,
+                  message: '请输入年龄',
+                  type: 'number'
+                },
+                {
+                  min: 1,
+                  max: 100,
+                  message: '请输入1~100的年龄',
+                  type: 'number'
+                }
+              ]
+            })(
+              <InputNumber/>
+            )}
+          </FormItem>
+          <FormItem label="性别：" {...formLayout}>
+            {getFieldDecorator('gender', {
+              rules: [
+                {
+                  required: true,
+                  message: '请选择性别'
+                }
+              ]
+            })(
+              <Select placeholder="请选择">
+                <Select.Option value="male">男</Select.Option>
+                <Select.Option value="female">女</Select.Option>
+              </Select>
+            )}
+          </FormItem>
+          <FormItem wrapperCol={{...formLayout.wrapperCol, offset: formLayout.labelCol.span}}>
+            <Button type="primary" htmlType="submit">提交</Button>
+          </FormItem>
+        </Form>
+      </div>
     );
   }
 }
@@ -85,44 +127,6 @@ UserEditor.contextTypes = {
   router: React.PropTypes.object.isRequired
 };
 
-UserEditor = formProvider({
-  name: {
-    defaultValue: '',
-    rules: [
-      {
-        pattern: function (value) {
-          return value.length > 0;
-        },
-        error: '请输入用户名'
-      },
-      {
-        pattern: /^.{1,4}$/,
-        error: '用户名最多4个字符'
-      }
-    ]
-  },
-  age: {
-    defaultValue: 0,
-    rules: [
-      {
-        pattern: function (value) {
-          return value >= 1 && value <= 100;
-        },
-        error: '请输入1~100的年龄'
-      }
-    ]
-  },
-  gender: {
-    defaultValue: '',
-    rules: [
-      {
-        pattern: function (value) {
-          return !!value;
-        },
-        error: '请选择性别'
-      }
-    ]
-  }
-})(UserEditor);
+UserEditor = Form.create()(UserEditor);
 
 export default UserEditor;
