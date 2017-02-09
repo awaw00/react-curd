@@ -24,14 +24,13 @@ class BookEditor extends React.Component {
     this.handleOwnerIdChange = this.handleOwnerIdChange.bind(this);
   }
 
-  componentWillMount () {
+  componentDidMount () {
+    // 在componentWillMount里使用form.setFieldsValue无法设置表单的值
+    // 所以在componentDidMount里进行赋值
+    // see: https://github.com/ant-design/ant-design/issues/4802
     const {editTarget, form} = this.props;
     if (editTarget) {
-      // 直接调用form.setFieldsValue无效
-      // 等待官方回复 https://github.com/ant-design/ant-design/issues/4802
-      setTimeout(() => {
-        form.setFieldsValue(editTarget);
-      });
+      form.setFieldsValue(editTarget);
     }
   }
 

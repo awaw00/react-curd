@@ -1,5 +1,4 @@
 import React from 'react';
-import HomeLayout from '../layouts/HomeLayout';
 import BookEditor from '../components/BookEditor';
 import { get } from '../utils/request';
 
@@ -23,13 +22,7 @@ class BookEdit extends React.Component {
 
   render () {
     const {book} = this.state;
-    return (
-      <HomeLayout title="编辑图书">
-        {
-          book ? <BookEditor editTarget={book}/> : '加载中...'
-        }
-      </HomeLayout>
-    );
+    return book ? <BookEditor editTarget={book}/> : <span>加载中...</span>;
   }
 }
 

@@ -12,7 +12,7 @@ class HomeLayout extends React.Component {
     return (
       <div>
         <header className={style.header}>
-          ReactManager
+          <Link to="/">ReactManager</Link>
         </header>
 
         <main className={style.main}>
