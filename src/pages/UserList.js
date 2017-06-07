@@ -27,7 +27,7 @@ class UserList extends React.Component {
     del('http://localhost:3000/user/' + user.id)
       .then(res => {
         this.setState({
-          userList: this.state.bookList.filter(item => item.id !== user.id)
+          userList: this.state.userList.filter(item => item.id !== user.id)
         });
         message.success('删除用户成功');
       })
